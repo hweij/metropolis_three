@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import * as camera from './camera';
+import { addLot } from './lot1';
 
 // Scene
 const scene = new THREE.Scene();
@@ -32,15 +33,7 @@ scene.add(box);
 box.position.x = 0.5;
 box.rotation.y = 0.5;
 
-// TEST TEST
-var geo = new THREE.PlaneBufferGeometry(10.8, 15);
-var mat = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-var plane = new THREE.Mesh(geo, mat);
-plane.position.set(5.4, 0, -7.5);
-plane.rotateX( - Math.PI / 2);
-scene.add(plane);
-
-// camera.lookAt(scene.position);
+addLot(scene);
 
 function animate(): void {
   requestAnimationFrame(animate);

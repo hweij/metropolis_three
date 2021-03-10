@@ -43,6 +43,12 @@ function _doKeyUp(ev: KeyboardEvent) {
     keyState.delete(ev.key.toUpperCase());
 }
 
-camera.position.x = 5.4;
-camera.position.y = 1.6;
-camera.position.z = 5;
+const defaultPosition = [5.4, 1.6, 20];
+
+export function setPosition(p: number[]) {
+    camera.position.x = p[0];
+    camera.position.y = p[1];
+    camera.position.z = p[2];
+}
+
+setPosition(defaultPosition);
