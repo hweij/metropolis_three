@@ -8,12 +8,23 @@ var keyState = new Set<String>();
 var direction = new THREE.Vector3();
 
 export function tick(dt: number) {
-    let speed = keyState.has('ARROWUP') ? 1 : (keyState.has('ARROWDOWN') ? -1 : 0);
-    if (speed) {
+    let dy = 0, dz = 0;
+    if (keyState.has('SHIFT')) {
+        dy = keyState.has('ARROWUP') ? 1 : (keyState.has('ARROWDOWN') ? -1 : 0);
+    }
+    else {
+        dz = keyState.has('ARROWUP') ? 1 : (keyState.has('ARROWDOWN') ? -1 : 0);
+    }
+    if (dz || dy) {
         const p = camera.position;
-        camera.getWorldDirection(direction);
-        const s = speed * dt * 4;
-        p.set((s * direction.x) + p.x, (s * direction.y) + p.y, (s * direction.z) + p.z);
+        if (dz) {
+            camera.getWorldDirection(direction);
+            const s = dz * dt * 4;
+            p.set((s * direction.x) + p.x, (s * direction.y) + p.y, (s * direction.z) + p.z);
+        }
+        else {
+            p.y = dy * dt * 4 + p.y;
+        }
     }
     let rot = keyState.has('ARROWLEFT') ? 1 : (keyState.has('ARROWRIGHT') ? -1 : 0);
     if (rot) {
