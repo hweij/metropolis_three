@@ -40,7 +40,7 @@ function _doKeyUp(ev: KeyboardEvent) {
     keyState.delete(ev.key.toUpperCase());
 }
 
-const defaultPosition = [5.4, 1.6, 20];
+const defaultPosition = [5.4, 1.6, 5];
 
 export function setPosition(p: number[]) {
     camera.position.x = p[0];
