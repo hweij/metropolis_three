@@ -8,27 +8,24 @@ var keyState = new Set<String>();
 var direction = new THREE.Vector3();
 
 export function tick(dt: number) {
-    let dy = 0, dz = 0;
-    if (keyState.has('SHIFT')) {
-        dy = keyState.has('ARROWUP') ? 1 : (keyState.has('ARROWDOWN') ? -1 : 0);
-    }
-    else {
-        dz = keyState.has('ARROWUP') ? 1 : (keyState.has('ARROWDOWN') ? -1 : 0);
-    }
-    if (dz || dy) {
-        const p = camera.position;
-        if (dz) {
-            camera.getWorldDirection(direction);
-            const s = dz * dt * 4;
-            p.set((s * direction.x) + p.x, (s * direction.y) + p.y, (s * direction.z) + p.z);
+    if (dt) {
+        const shift = keyState.has('SHIFT');
+        const dMove = keyState.has('ARROWUP') ? 1 : (keyState.has('ARROWDOWN') ? -1 : 0);
+        if (dMove) {
+            const p = camera.position;
+            if (shift) {
+                p.y = dMove * dt * 4 + p.y;
+            }
+            else {
+                camera.getWorldDirection(direction);
+                const s = dMove * dt * 4;
+                p.set((s * direction.x) + p.x, (s * direction.y) + p.y, (s * direction.z) + p.z);
+            }
         }
-        else {
-            p.y = dy * dt * 4 + p.y;
+        const rot = keyState.has('ARROWLEFT') ? 1 : (keyState.has('ARROWRIGHT') ? -1 : 0);
+        if (rot) {
+            camera.rotateY(rot * dt);
         }
-    }
-    let rot = keyState.has('ARROWLEFT') ? 1 : (keyState.has('ARROWRIGHT') ? -1 : 0);
-    if (rot) {
-        camera.rotateY(rot * dt);
     }
 }
 
