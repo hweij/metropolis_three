@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { HBoxGeometry } from '../geometry/hbox_geometry';
-import { HExtrudeGeometry } from '../geometry/hextrude_geometry';
+import { HPlaneGeometry } from '../geometry/hplane_geometry';
 
 const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const matGroundLevel = createTexMaterial("/images/ground_level.png");
@@ -19,13 +19,6 @@ function makeUV(x0, y0, x1, y1) {
 }
 
 function addGroundLevel(scene: THREE.Scene) {
-    // Ground level plane
-    // var uvs = new Float32Array([
-    //     0, 1,
-    //     1, 1,
-    //     0, 0,
-    //     1, 0
-    // ]);
     const uvs = makeUV(0, 0, 1, 1);
     var geo = new THREE.PlaneBufferGeometry(10.8, 15);
     geo.addAttribute('uv', new THREE.BufferAttribute( uvs, 2 ))
@@ -34,12 +27,15 @@ function addGroundLevel(scene: THREE.Scene) {
     plane.rotateX(- Math.PI / 2);
     scene.add(plane);
     // Foundation, floor at elevation
-    const foundation = addBox([7.7, 0.4, 10], [2,0,-2.85], matGroundLevel, scene);
+    // const foundation = addBox([7.7, 0.4, 10], [2,0,-2.85], matGroundLevel, scene);
+    const fgeo = new HPlaneGeometry([1.85,2.85, 9.45,2.85, 9.45,13.15, 1.85,13.15], [], 10.8, 15, "bottom", [0,0.4,0]);
+    const foundation = new THREE.Mesh(fgeo, matGroundLevel);
+    scene.add(foundation);
 
     // TEST TEST
-    const hextrude = new HExtrudeGeometry([0,0, 1,0, 1,1, 0,1],[[0.2, 0.2, 0.8, 0.2, 0.8, 0.8, 0.2, 0.8]], 2, 2);
-    const hmesh = new THREE.Mesh(hextrude, matGroundLevel);
-    scene.add(hmesh);
+    // const hextrude = new HPlaneGeometry([0,0, 1,0, 1,1, 0,1],[[0.2, 0.2, 0.8, 0.2, 0.8, 0.8, 0.2, 0.8]], 1, 1, "bottom", [5,4,0]);
+    // const hmesh = new THREE.Mesh(hextrude, matGroundLevel);
+    // scene.add(hmesh);
 }
 
 function createTexMaterial(url: string) {
