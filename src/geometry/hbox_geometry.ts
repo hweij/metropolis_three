@@ -16,6 +16,8 @@ type GeoParam = {
     uvBottom?: UV;
 }
 
+export const UV_FLIP_H = [[1,0],[0,0],[1,1],[0,1]] as UV;
+
 function _normUV(uv: UV) {
     if (!uv) {
         return [[0,0],[1,0],[0,1],[1,1]];   // Default UV
@@ -49,64 +51,41 @@ export class HBoxGeometry extends THREE.BufferGeometry {
         const uvTop = _normUV(p.uvTop);
         const uvBottom = _normUV(p.uvBottom);
 
-        const vertices = [
-            // front
-            { pos: [x0, y0, z1], norm: [0, 0, 1], uv: uvFront[0], },
-            { pos: [x1, y0, z1], norm: [0, 0, 1], uv: uvFront[1], },
-            { pos: [x0, y1, z1], norm: [0, 0, 1], uv: uvFront[2], },
+        const nFront = [0, 0, 1];
+        const nBack = [0, 0, -1];
+        const nRight = [1, 0, 0];
+        const nLeft = [-1, 0, 0];
+        const nTop = [0, 1, 0];
+        const nBottom = [0, -1, 0];
 
-            { pos: [x0, y1, z1], norm: [0, 0, 1], uv: uvFront[2], },
-            { pos: [x1, y0, z1], norm: [0, 0, 1], uv: uvFront[1], },
-            { pos: [x1, y1, z1], norm: [0, 0, 1], uv: uvFront[3], },
-            // right
-            { pos: [x1, y0, z1], norm: [1, 0, 0], uv: uvRight[0], },
-            { pos: [x1, y0, z0], norm: [1, 0, 0], uv: uvRight[1], },
-            { pos: [x1, y1, z1], norm: [1, 0, 0], uv: uvRight[2], },
-
-            { pos: [x1, y1, z1], norm: [1, 0, 0], uv: uvRight[2], },
-            { pos: [x1, y0, z0], norm: [1, 0, 0], uv: uvRight[1], },
-            { pos: [x1, y1, z0], norm: [1, 0, 0], uv: uvRight[3], },
-            // back
-            { pos: [x1, y0, z0], norm: [0, 0, -1], uv: uvBack[0], },
-            { pos: [x0, y0, z0], norm: [0, 0, -1], uv: uvBack[1], },
-            { pos: [x1, y1, z0], norm: [0, 0, -1], uv: uvBack[2], },
-
-            { pos: [x1, y1, z0], norm: [0, 0, -1], uv: uvBack[2], },
-            { pos: [x0, y0, z0], norm: [0, 0, -1], uv: uvBack[1], },
-            { pos: [x0, y1, z0], norm: [0, 0, -1], uv: uvBack[3], },
-            // left
-            { pos: [x0, y0, z0], norm: [-1, 0, 0], uv: uvLeft[0], },
-            { pos: [x0, y0, z1], norm: [-1, 0, 0], uv: uvLeft[1], },
-            { pos: [x0, y1, z0], norm: [-1, 0, 0], uv: uvLeft[2], },
-
-            { pos: [x0, y1, z0], norm: [-1, 0, 0], uv: uvLeft[2], },
-            { pos: [x0, y0, z1], norm: [-1, 0, 0], uv: uvLeft[1], },
-            { pos: [x0, y1, z1], norm: [-1, 0, 0], uv: uvLeft[3], },
-            // top
-            { pos: [x1, y1, z0], norm: [0, 1, 0], uv: uvTop[3], },
-            { pos: [x0, y1, z0], norm: [0, 1, 0], uv: uvTop[2], },
-            { pos: [x1, y1, z1], norm: [0, 1, 0], uv: uvTop[1], },
-
-            { pos: [x1, y1, z1], norm: [0, 1, 0], uv: uvTop[1], },
-            { pos: [x0, y1, z0], norm: [0, 1, 0], uv: uvTop[2], },
-            { pos: [x0, y1, z1], norm: [0, 1, 0], uv: uvTop[0], },
-            // bottom
-            { pos: [x1, y0, z1], norm: [0, -1, 0], uv: uvBottom[3], },
-            { pos: [x0, y0, z1], norm: [0, -1, 0], uv: uvBottom[2], },
-            { pos: [x1, y0, z0], norm: [0, -1, 0], uv: uvBottom[1], },
-
-            { pos: [x1, y0, z0], norm: [0, -1, 0], uv: uvBottom[1], },
-            { pos: [x0, y0, z1], norm: [0, -1, 0], uv: uvBottom[2], },
-            { pos: [x0, y0, z0], norm: [0, -1, 0], uv: uvBottom[0], },
+        const verts = [
+            [x0,y0,z0],
+            [x0,y0,z1],
+            [x0,y1,z0],
+            [x0,y1,z1],
+            [x1,y0,z0],
+            [x1,y0,z1],
+            [x1,y1,z0],
+            [x1,y1,z1]
         ];
 
         const positions = [];
         const normals = [];
         const uvs = [];
-        for (const vertex of vertices) {
-            positions.push(...vertex.pos);
-            normals.push(...vertex.norm);
-            uvs.push(...vertex.uv);
+
+        addFace([1,5,3,3,5,7], nFront, uvFront);
+        addFace([5,4,7,7,4,6], nRight, uvRight);
+        addFace([4,0,6,6,0,2], nBack, uvBack);
+        addFace([0,1,2,2,1,3], nLeft, uvLeft);
+        addFace([3,7,2,2,7,6], nTop, uvTop);
+        addFace([0,4,1,1,4,5], nBottom, uvBottom);
+
+        function addFace(idx: number[], nv: number[], uv: number[][]) {
+            for (let i=0; i<6; i++) {
+                positions.push(...verts[idx[i]]);
+            }
+            normals.push(...nv,...nv,...nv,...nv,...nv,...nv);
+            uvs.push(...uv[0],...uv[1],...uv[2],...uv[2],...uv[1],...uv[3]);
         }
 
         const positionNumComponents = 3;

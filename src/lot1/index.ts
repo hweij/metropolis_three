@@ -33,7 +33,7 @@ function addGroundLevel(scene: THREE.Scene) {
     plane.rotateX(- Math.PI / 2);
     scene.add(plane);
     // Foundation, floor at elevation
-    const foundation = addBox([7.7, 0.4, 10], [2,0,-2.85], matGroundLevel, scene);
+    const foundation = addBox([7.7, 7.4, 10], [2,0,-2.85], matGroundLevel, scene);
 }
 
 function createTexMaterial(url: string) {

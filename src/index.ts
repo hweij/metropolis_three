@@ -53,3 +53,15 @@ function render(): void {
 
 
 animate();
+
+
+// TEST TEST
+import * as earcut from 'earcut';
+console.log('EARCUT');
+console.log(earcut);
+
+const res = earcut([
+  0,0, 1,0, 1,1, 0,1,
+  0.2,0.2, 0.8,0.2, 0.8,0.8, 0.2,0.8],
+  [4],2);
+console.log(res);

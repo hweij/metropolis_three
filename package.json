@@ -11,6 +11,7 @@
   "keywords": [],
   "license": "MIT",
   "devDependencies": {
+    "@types/earcut": "^2.1.1",
     "css-loader": "latest",
     "html-webpack-plugin": "latest",
     "progress-bar-webpack-plugin": "latest",
@@ -22,6 +23,7 @@
     "webpack-dev-server": "latest"
   },
   "dependencies": {
+    "earcut": "^2.2.2",
     "three": "latest"
   }
 }
