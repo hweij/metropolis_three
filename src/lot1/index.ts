@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { HBoxGeometry } from '../geometry/hbox_geometry';
+import { HExtrudeGeometry } from '../geometry/hextrude_geometry';
 
 const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const matGroundLevel = createTexMaterial("/images/ground_level.png");
@@ -33,7 +34,12 @@ function addGroundLevel(scene: THREE.Scene) {
     plane.rotateX(- Math.PI / 2);
     scene.add(plane);
     // Foundation, floor at elevation
-    const foundation = addBox([7.7, 7.4, 10], [2,0,-2.85], matGroundLevel, scene);
+    const foundation = addBox([7.7, 0.4, 10], [2,0,-2.85], matGroundLevel, scene);
+
+    // TEST TEST
+    const hextrude = new HExtrudeGeometry([0,0, 1,0, 1,1, 0,1],[[0.2, 0.2, 0.8, 0.2, 0.8, 0.8, 0.2, 0.8]], 2, 2);
+    const hmesh = new THREE.Mesh(hextrude, matGroundLevel);
+    scene.add(hmesh);
 }
 
 function createTexMaterial(url: string) {
