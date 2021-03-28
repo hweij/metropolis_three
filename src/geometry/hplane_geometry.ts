@@ -5,9 +5,49 @@ export enum Face {
     FRONT, BACK, LEFT, RIGHT, TOP, BOTTOM
 }
 
+type GeoOptions = {
+    pos?: [number, number, number];
+    depth?: number;
+    uvmat?: number[];
+}
+
+export function createUV(bounds: [number, number, number, number], rot: 0 | 1 | 2 | 3, flip: boolean) {
+    const [u0, v0, u1, v1] = bounds;
+    const du = u1 - u0;
+    const dv = v1 - v0;
+
+    switch (rot) {
+        case 0:
+            return [
+                du, 0, u0,
+                0, dv, v0
+            ];
+        case 1: // 90
+            return [
+                0, -du, 1 - u0,
+                dv, 0, v0
+            ];
+        case 2: // 180
+            return [
+                -dv, 0, 1 - v0,
+                0, -du, 1 - u0
+            ];
+        case 3: // 270
+            return [
+                0, dv, v0,
+                -du, 0, 1 - u0
+            ];
+    }
+}
+
 export class HPlaneGeometry extends THREE.BufferGeometry {
-    constructor(shape: number[], holes: number[][], width: number, height: number, face: Face, pos = [0, 0, 0], depth = -1) {
+    constructor(shape: number[], holes: number[][], size: [number, number], face: Face, options?: GeoOptions) {
         super();
+
+        const [width, height] = size;
+        const pos = options?.pos || [0, 0, 0];
+        const depth = options?.depth || -1;
+        const uvmat = options?.uvmat || [1,0,0,0,1,0];
 
         // Prepare format for earcut
         // Merge shape and hole coordinates into one array
@@ -33,12 +73,15 @@ export class HPlaneGeometry extends THREE.BufferGeometry {
             const x = vertices[i * 2];
             const y = vertices[i * 2 + 1];
             vertices3d.push(
-                (mat[0] * x)+  mat[1],
+                (mat[0] * x) + mat[1],
                 (mat[2] * y) + mat[3],
                 (mat[4] * x) + (mat[5] * y) + mat[6]
             );
-            normals.push(nv[0],nv[1],nv[1]);
-            uvs.push(x / width, y / height);
+            normals.push(nv[0], nv[1], nv[1]);
+            const u = x / width;
+            const v = y / height;
+//            uvs.push(x / width, y / height);
+            uvs.push((uvmat[0] * u) + (uvmat[1] * v) + uvmat[2],(uvmat[3] * u) + (uvmat[4] * v) + uvmat[5]);
         }
         if (depth >= 0) {
             const nvi = [-nv[0], -nv[1], -nv[2]];
@@ -50,18 +93,18 @@ export class HPlaneGeometry extends THREE.BufferGeometry {
                     vertices3d[index + 1] + vDepth[1],
                     vertices3d[index + 2] + vDepth[2]
                 );
-                normals.push(nvi[0],nvi[1],nvi[1]);
+                normals.push(nvi[0], nvi[1], nvi[1]);
                 index += 3;
             }
             const uvlen = uvs.length;
-            for (let uvi = 0; uvi<uvlen; uvi++) {
+            for (let uvi = 0; uvi < uvlen; uvi++) {
                 uvs.push(uvs[uvi]);
             }
             console.log(uvs)
             // Add indices for second plane. This is done in reverse order
             // to get the correct facing.
             const ni = indices.length;
-            for (let i=0; i<ni; i++) {
+            for (let i = 0; i < ni; i++) {
                 indices.push(indices[ni - i - 1] + n);
             }
         }
@@ -141,6 +184,6 @@ function faceMatrix(face: Face, w: number, h: number, pos: number[]) {
                 -1, 0, pos[2] + w
             ];
             break;
-        }
+    }
     return mat;
 }
