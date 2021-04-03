@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { HBoxGeometry } from '../geometry/hbox_geometry';
-import { createUV, Face, HPlaneGeometry } from '../geometry/hplane_geometry';
+import { HPlaneGeometry } from '../geometry/hplane_geometry';
+import { createTexMatrix, Face } from '../geometry/geomat';
 
 const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const matGroundLevel = createTexMaterial("/images/ground_level.png");
@@ -26,7 +27,7 @@ function addGroundLevel(scene: THREE.Scene) {
     // Foundation, floor at elevation
     // const foundation = addBox([7.7, 0.4, 10], [2,0,-2.85], matGroundLevel, scene);
     const fgeo = new HPlaneGeometry([
-        3.5,2.85, 9.45,2.85, 9.45,13.15, 1.85,13.15, 1.85, 5.85, 3.5, 5.85], [], [10.8, 15], Face.TOP, {pos: [0,0.4,0], depth: 0.2, uvmat: createUV([0,0,1,1], 3, false)});
+        3.5,2.85, 9.45,2.85, 9.45,13.15, 1.85,13.15, 1.85, 5.85, 3.5, 5.85], [], [10.8, 15], Face.TOP, {pos: [0,0.4,0], depth: 0.2, uvmat: createTexMatrix([0,0,1,1], 0, false)});
     const foundation = new THREE.Mesh(fgeo, matGroundLevel);
     scene.add(foundation);
 
